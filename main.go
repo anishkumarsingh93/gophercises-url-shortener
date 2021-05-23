@@ -22,9 +22,25 @@ func main() {
 
 	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
+	// Build the YAMLHandler using the mapHandler as the
+	// fallback
+	yaml := `
+- path: /urlshort
+  url: https://github.com/gophercises/urlshort
+- path: /urlshort-final
+  url: https://github.com/gophercises/urlshort/tree/solution
+- path: /apple
+  url: https://apple.com
+  `
+
+	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
+	if err != nil {
+		panic(err)
+	}
+
 	//starting the server
 	fmt.Println("Starting server at port: ", port)
-	http.ListenAndServe(port, mapHandler)
+	http.ListenAndServe(port, yamlHandler)
 
 }
 
